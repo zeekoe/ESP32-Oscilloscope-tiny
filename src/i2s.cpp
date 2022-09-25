@@ -1,3 +1,11 @@
+#include <Arduino.h>
+#include <driver/i2s.h>
+#include "esp_adc_cal.h"
+#include "globals.h"
+#include <soc/syscon_reg.h>
+
+size_t dummy;
+
 void configure_i2s(int rate) {
   /*keep in mind:
      dma_buf_len * dma_buf_count * bits_per_sample/8 > 4096
@@ -23,10 +31,9 @@ void configure_i2s(int rate) {
   i2s_adc_enable(I2S_NUM_0);
 }
 
-void ADC_Sampling(uint16_t *i2s_buff){
+void ADC_Sampling(uint16_t *i2s_buff) {
   for (int i = 0; i < B_MULT; i++) {
-    //TODO i2s_read_bytes is deprecated, replace with new function
-    i2s_read_bytes(I2S_NUM_0, (char*)&i2s_buff[i * NUM_SAMPLES],  NUM_SAMPLES * sizeof(uint16_t), portMAX_DELAY);    
+    i2s_read(I2S_NUM_0, (char*)&i2s_buff[i * NUM_SAMPLES],  NUM_SAMPLES * sizeof(uint16_t), &dummy, portMAX_DELAY);    
   }
 }
 

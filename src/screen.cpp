@@ -1,3 +1,30 @@
+#include <Arduino.h>
+#include "globals.h"
+#include "data_analysis.h"
+#include "filters.h"
+
+#include <U8g2lib.h>
+
+// Width and height of sprite
+#define WIDTH  128
+#define HEIGHT 64
+
+U8G2_SSD1306_128X64_NONAME_F_SW_I2C u8g2(U8G2_R0, /* clock=*/ 15, /* data=*/ 4, /* reset=*/ 16);   // All Boards without Reset of the Display
+
+
+void draw_sprite(float freq,
+                 float period,
+                 float mean,
+                 float max_v,
+                 float min_v,
+                 uint32_t trigger,
+                 float sample_rate,
+                 bool digital_data,
+                 bool new_data
+                );
+void draw_grid();
+void draw_channel1(uint32_t trigger0, uint32_t trigger1, uint16_t *i2s_buff, float sample_rate);
+
 void setup_screen() {
   // Initialise the TFT registers
   u8g2.begin();

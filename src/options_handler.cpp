@@ -1,3 +1,11 @@
+#include <Arduino.h>
+#include "globals.h"
+
+void button();
+void hide_menu();
+void show_menu();
+void hide_all();
+
 int voltage_division[6] = { //screen has 4 divisions, 31 pixels each (125 pixels of height)
   550, //fullscreen 3.3V peak-peak
   500,

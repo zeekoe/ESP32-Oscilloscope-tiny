@@ -1,3 +1,8 @@
+#include <Arduino.h>
+#include "globals.h"
+#include "filters.h"
+#include "screen.h"
+
 void peak_mean(uint16_t *i2s_buffer, uint32_t len, float * max_value, float * min_value, float *pt_mean) {
   max_value[0] = i2s_buffer[0];
   min_value[0] = i2s_buffer[0];
