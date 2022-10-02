@@ -9,8 +9,8 @@
 #define WIDTH  128
 #define HEIGHT 64
 
-U8G2_SSD1306_128X64_NONAME_F_SW_I2C u8g2(U8G2_R0, /* clock=*/ 15, /* data=*/ 4, /* reset=*/ 16);   // All Boards without Reset of the Display
-
+// U8G2_SSD1306_128X64_NONAME_F_SW_I2C u8g2(U8G2_R0, /* clock=*/ 15, /* data=*/ 4, /* reset=*/ 16);
+U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ 16, /* clock=*/ 15, /* data=*/ 4);
 
 void draw_sprite(float freq,
                  float period,
@@ -28,6 +28,7 @@ void draw_channel1(uint32_t trigger0, uint32_t trigger1, uint16_t *i2s_buff, flo
 void setup_screen() {
   // Initialise the TFT registers
   u8g2.begin();
+  u8g2.setFont(u8g2_font_profont10_tr);
 }
 
 int data[280] = {0};
@@ -61,9 +62,7 @@ void update_screen(uint16_t *i2s_buff, float sample_rate) {
 
   float mean = 0;
   float max_v, min_v;
-Serial.println("x 1");
   peak_mean(i2s_buff, BUFF_SIZE, &max_v, &min_v, &mean);
-  Serial.println("x 2");
 
   float freq = 0;
   float period = 0;
@@ -72,7 +71,6 @@ Serial.println("x 1");
 
   //if analog mode OR auto mode and wave recognized as analog
   bool digital_data = false;
-  Serial.println("x 3");
   if (digital_wave_option == 1) {
     trigger_freq_analog(i2s_buff, sample_rate, mean, max_v, min_v, &freq, &period, &trigger0, &trigger1);
   }
@@ -88,14 +86,11 @@ Serial.println("x 1");
   else {
     trigger_freq_digital(i2s_buff, sample_rate, mean, max_v, min_v, &freq, &period, &trigger0);
   }
-  Serial.println("x 4");
   draw_sprite(freq, period, mean, max_v, min_v, trigger0, sample_rate, digital_data, true);
 }
 
 void drawString(String str, int x, int y) {
-  char charBuf[50];
-  str.toCharArray(charBuf, 50);
-  u8g2.drawStr(x, y, charBuf);
+  u8g2.drawStr(x, y, str.c_str());
 }
 
 void draw_sprite(float freq,
@@ -153,15 +148,12 @@ void draw_sprite(float freq,
   else
     wave_option = "MODE:Dig./data";
 
-Serial.println("x 5");
 
   if (new_data) {
     // Fill the whole sprite with black (Sprite is in memory so not visible yet)
     u8g2.clearBuffer();
 
-Serial.println("x 6");
     draw_grid();
-    Serial.println("x 7");
 
     if (auto_scale) {
       auto_scale = false;
@@ -177,11 +169,9 @@ Serial.println("x 6");
     if (!(digital_wave_option == 2 && trigger == 0))
       draw_channel1(trigger, 0, i2s_buff, sample_rate);
   }
-  Serial.println("x 8");
 
-  int shift = 150;
+  int shift = 70;
   if (menu) {
-    Serial.println("menu");
     u8g2.drawLine(0, 32, 128, 32); //center line
     
 //    u8g2.drawFrame(shift, 0, 102, 135);
@@ -190,7 +180,6 @@ Serial.println("x 6");
 //    u8g2.drawFrame(shift + 1, 3 + 10 * (opt - 1), 100, 11);
 //    Serial.println("x 83");
 
-    Serial.println("x 9");
 
     drawString("AUTOSCALE",  shift + 5, 5);
     u8g2.sendBuffer();
@@ -202,8 +191,6 @@ Serial.println("x 6");
     drawString(str_stop, shift + 5, 65);
     drawString(wave_option, shift + 5, 75);
     drawString("Single " + String(single_trigger ? "ON" : "OFF"), shift + 5, 85);
-
-    Serial.println("x 10");
 
     u8g2.drawLine(shift, 103, shift + 100, 103);
 
@@ -220,8 +207,6 @@ Serial.println("x 6");
     String offset_line = String((2.0 * v_div) / 1000.0 - offset) + "V";
     drawString(offset_line,  shift + 40, 59);
 
-Serial.println("x 11");
-
     if (set_value) {
       u8g2.drawFrame(229, 0, 11, 11);
       u8g2.drawLine(231, 5, 238 , 5);
@@ -234,38 +219,30 @@ Serial.println("x 11");
     Serial.println("x 12");
   }
   else if (info) {
-    Serial.println("info");
-    u8g2.drawLine(0, 32, 96, 32); //center line
-    u8g2.sendBuffer();
+    // u8g2.drawLine(0, 32, 128, 32); //center line
     //spr.drawRect(shift + 10, 0, 280 - shift - 20, 30, TFT_WHITE);
-    drawString("P-P: " + String(max_v - min_v) + "V",  shift + 15, 5);
-    u8g2.sendBuffer();
+    drawString("P-P: " + String(max_v - min_v) + "V",  shift + 15, 8);
     drawString(frequency,  shift + 15, 15);
-    drawString(String(int(v_div)) + "mV/div",  shift - 100, 5);
-    drawString(String(int(s_div)) + "uS/div",  shift - 100, 15);
+    drawString(String(int(v_div)) + "mV/div",  0, 8);
+    drawString(String(int(s_div)) + "uS/div",  0, 16);
     String offset_line = String((2.0 * v_div) / 1000.0 - offset) + "V";
-    drawString(offset_line,  shift + 100, 112);
+    drawString(offset_line,  shift + 15, 112);
   }
-Serial.println("x 13");
 
   //push the drawed sprite to the screen
   u8g2.sendBuffer();
-  Serial.println("x 14");
 
   yield(); // Stop watchdog reset
-  Serial.println("x 15");
 }
 
 void draw_grid() {
-  for (int i = 0; i < 28; i++) {
-    u8g2.drawPixel(i * 10, 40);
-    u8g2.drawPixel(i * 10, 80);
-    u8g2.drawPixel(i * 10, 120);
-    u8g2.drawPixel(i * 10, 160);
-    u8g2.drawPixel(i * 10, 200);
-  }
-  for (int i = 0; i < 240; i += 10) {
-    for (int j = 0; j < 280; j += 40) {
+  // for (int i = 0; i < 28; i++) {
+  //   u8g2.drawPixel(i * 10, 40);
+  //   u8g2.drawPixel(i * 10, 80);
+  //   u8g2.drawPixel(i * 10, 120);
+  // }
+  for (int i = 0; i < HEIGHT; i += 16) {
+    for (int j = 0; j < WIDTH; j += 32) {
       u8g2.drawPixel(j, i);
     }
   }
@@ -287,7 +264,7 @@ void draw_channel1(uint32_t trigger0, uint32_t trigger1, uint16_t *i2s_buff, flo
   trigger0 += index_offset;  
   uint32_t old_index = trigger0;
   float n_data = 0, o_data = to_scale(i2s_buff[trigger0]);
-  for (uint32_t i = 1; i < 280; i++) {
+  for (uint32_t i = 1; i < WIDTH; i++) {
     uint32_t index = trigger0 + (uint32_t)((i + 1) * data_per_pixel);
     if (index < BUFF_SIZE) {
       if (full_pix && s_div > 40 && current_filter == 0) {

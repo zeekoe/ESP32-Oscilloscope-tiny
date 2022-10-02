@@ -136,13 +136,10 @@ void core0_task( void * pvParameters ) {
       new_data = false;
       menu_action = false;
 
-      Serial.println("CORE0 - before updating screen");
-
       updating_screen = true;
       update_screen(i2s_buff, RATE);
       updating_screen = false;
       vTaskDelay(pdMS_TO_TICKS(10));
-      Serial.println("CORE0");
     }
 
     vTaskDelay(pdMS_TO_TICKS(10));
@@ -174,7 +171,6 @@ void core1_task( void * pvParameters ) {
           stop_change = true;
         }
       }
-      Serial.println("CORE1");
       vTaskDelay(pdMS_TO_TICKS(300));
     }
     else {
