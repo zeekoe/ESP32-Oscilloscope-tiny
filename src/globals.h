@@ -1,3 +1,6 @@
+#ifndef GLOBALS_H_
+#define GLOBALS_H_
+
 #include "esp_adc_cal.h"
 
 #define ADC_CHANNEL   ADC1_CHANNEL_5  // GPIO33
@@ -12,20 +15,20 @@
 #define BUTTON_Back        34
 
 
-float offset = 0;
-float toffset = 0;
-
-float v_div = 825;
-float s_div = 10;
-
 #define DELAY 1000
 
-esp_adc_cal_characteristics_t adc_chars;
+extern float offset;
+extern float toffset;
 
-TaskHandle_t task_menu;
-TaskHandle_t task_adc;
+extern float v_div;
+extern float s_div;
 
-uint8_t current_filter = 1;
+extern esp_adc_cal_characteristics_t adc_chars;
+
+extern TaskHandle_t task_menu;
+extern TaskHandle_t task_adc;
+
+extern uint8_t current_filter;
 
 //options handler
 enum Option {
@@ -47,33 +50,35 @@ enum Option {
   Cursor2
 };
 
-int8_t volts_index = 0;
+extern int8_t volts_index;
 
-int8_t tscale_index = 0;
+extern int8_t tscale_index;
 
-uint8_t opt = None;
+extern uint8_t opt;
 
-bool menu = false;
-bool info = true;
-bool set_value  = false;
+extern bool menu;
+extern bool info;
+extern bool set_value;
 
-float RATE = 1000; //in ksps --> 1000 = 1Msps
+extern float RATE;
 
-bool auto_scale = false;
+extern bool auto_scale;
 
-bool full_pix = true;
+extern bool full_pix;
 
-bool stop = false;
+extern bool stop;
 
-bool stop_change = false;
+extern bool stop_change;
 
-uint16_t i2s_buff[BUFF_SIZE];
+extern uint16_t i2s_buff[BUFF_SIZE];
 
-bool single_trigger = false;
-bool data_trigger = false;
+extern bool single_trigger;
+extern bool data_trigger;
 
-bool updating_screen = false;
-bool new_data = false;
-bool menu_action = false;
-uint8_t digital_wave_option = 0; //0-auto | 1-analog | 2-digital data (SERIAL/SPI/I2C/etc)
-int btnok,btnpl,btnmn,btnbk;
+extern bool updating_screen;
+extern bool new_data;
+extern bool menu_action;
+extern uint8_t digital_wave_option; //0-auto | 1-analog | 2-digital data (SERIAL/SPI/I2C/etc)
+extern int btnok,btnpl,btnmn,btnbk;
+
+#endif
