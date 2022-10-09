@@ -26,15 +26,14 @@ void draw_grid();
 void draw_channel1(uint32_t trigger0, uint32_t trigger1, uint16_t *i2s_buff, float sample_rate);
 
 void setup_screen() {
-  // Initialise the TFT registers
   u8g2.begin();
   u8g2.setFont(u8g2_font_profont10_tr);
 }
 
-int data[280] = {0};
+int data[280] = {0}; // TODO: shrink to WIDTH (128)?
 
 float to_scale(float reading) {
-  float temp = WIDTH -
+  float temp = HEIGHT -
                (
                  (
                    (
@@ -42,10 +41,10 @@ float to_scale(float reading) {
                      + (offset / 3.3)
                    )
                    * 3300 /
-                   (v_div * 6)
+                   (v_div * 4)
                  )
                )
-               * (WIDTH - 1)
+               * (HEIGHT - 1)
                - 1;
   return temp;
 }
@@ -159,10 +158,10 @@ void draw_sprite(float freq,
       auto_scale = false;
       v_div = 1000.0 * max_v / 6.0;
       s_div = period / 3.5;
-      if (s_div > 7000 || s_div <= 0)
-        s_div = 7000;
+      if (s_div > 12000 || s_div <= 0)
+        s_div = 12000;
       if (v_div <= 0)
-        v_div = 550;
+        v_div = 825;
     }
 
     //only draw digital data if a trigger was in the data
@@ -182,7 +181,6 @@ void draw_sprite(float freq,
 
 
     drawString("AUTOSCALE",  shift + 5, 5);
-    u8g2.sendBuffer();
     drawString(String(int(v_div)) + "mV/div",  shift + 5, 15);
     drawString(String(int(s_div)) + "uS/div",  shift + 5, 25);
     drawString("Offset: " + String(offset) + "V",  shift + 5, 35);
@@ -216,7 +214,6 @@ void draw_sprite(float freq,
       u8g2.drawFrame(229, 124, 11, 11);
       u8g2.drawLine(231, 129, 238, 129);
     }
-    Serial.println("x 12");
   }
   else if (info) {
     // u8g2.drawLine(0, 32, 128, 32); //center line
@@ -255,7 +252,7 @@ void draw_channel1(uint32_t trigger0, uint32_t trigger1, uint16_t *i2s_buff, flo
   mean_filter mfilter(5);
   mfilter.init(i2s_buff[trigger0]);
   filter._value = i2s_buff[trigger0];
-  float data_per_pixel = (s_div / 40.0) / (sample_rate / 1000);
+  float data_per_pixel = (s_div / 32.0) / (sample_rate / 1000);
 
   //  uint32_t cursor = (trigger1-trigger0)/data_per_pixel;
   //  u8g2.drawLine(cursor, 0, cursor, 135, TFT_RED);
