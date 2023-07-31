@@ -91,14 +91,15 @@ void setup() {
   
   setup_screen();
   
-  pinMode(BUTTON_Ok , INPUT);
-  pinMode(BUTTON_Plus , INPUT);
-  pinMode(BUTTON_Minus , INPUT);
-  pinMode(BUTTON_Back , INPUT);
-  attachInterrupt(BUTTON_Ok, btok, RISING);
-  attachInterrupt(BUTTON_Plus, btplus, RISING);
-  attachInterrupt(BUTTON_Minus, btminus, RISING);
-  attachInterrupt(BUTTON_Back, btback, RISING);
+  pinMode(BUTTON_Ok , INPUT_PULLUP);
+  pinMode(BUTTON_Plus , INPUT_PULLUP);
+  pinMode(BUTTON_Minus , INPUT_PULLUP);
+  pinMode(BUTTON_Back , INPUT_PULLUP);
+  attachInterrupt(BUTTON_Ok, btok, FALLING);
+  attachInterrupt(BUTTON_Plus, btplus, FALLING);
+  attachInterrupt(BUTTON_Minus, btminus, FALLING);
+  attachInterrupt(BUTTON_Back, btback, FALLING);
+  touchRead(T4)
 
   characterize_adc();
 #ifdef DEBUG_BUF

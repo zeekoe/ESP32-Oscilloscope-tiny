@@ -45,6 +45,7 @@ void menu_handler() {
 void button() {
   if ( btnok == 1 || btnbk == 1 || btnpl == 1 || btnmn == 1)
   {
+    Serial.printf("%d - %d - %d - %d\n", btnok, btnbk, btnpl, btnmn);
     menu_action = true;
   }
   if (menu == true)
